@@ -43,6 +43,7 @@ KEYWORDS = [
     'VIDEO VERSION',
     'VIP',
     'WIP',
+]
 
 JUNK = [
     '| MUSIC |',
@@ -62,14 +63,14 @@ SUBS = {
 }
 
 
-
 SANITIZATIONS = {
-    '(': '['  # Parentheses aren't linux friendly
-    ')': ']'
-    '\'': ''  # Slashes are not filename friendly
-    '/': ''   # Slashes are not filename friendly
-    ',': ''
-    '!': ''
-    '&': 'x'  # Use x instead of &
+    '_': ' ',   # More readable for humans and media libraries
+    '(': '[',   # Parentheses aren't linux friendly
+    ')': ']',
+    '\\': ' ',  # Slashes are not filename friendly
+    '/': ' ',   # Slashes are not filename friendly
+    ',': '',
+    '!': '',
+    '&': 'x',   # Use x instead of &
     '..': '.',
 }
