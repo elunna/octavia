@@ -34,7 +34,9 @@ def rm_spaces(filename):
 
 
 def correct_spacing(filename):
-    return ' '.join(filename.split())
+    newname, ext = os.path.splitext(filename)
+    newname = ' '.join(newname.split())
+    return ''.join([newname.strip(), ext.strip()])
 
 
 def trim(filename):

@@ -15,6 +15,12 @@ def test_clean_uglyfile1():
     assert filenames.clean(t) == expected
 
 
+def test_clean_uglyfile2():
+    t = '_The    Smile,_ Song(OFFICIAL) [HD]..mp3'
+    expected = 'The Smile Song.mp3'
+    assert filenames.clean(t) == expected
+
+
 """
 Tests for rm_spaces
 """
