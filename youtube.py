@@ -135,15 +135,15 @@ def clean_title_characters():
             os.rename(file, newname)
 
 
-def download_urls(urls):
+def download_urls(urls, _format):
     for URL in urls:
         #  os.system('youtube-dl --max-quality --o "%(title)s.%(ext)s" {}'.format(i))
 
-        COMMAND = [
-            'youtube-dl',
-            '--no-playlist',
-            '--o', '%(title)s.%(ext)s',
-            URL]
+        if _format == 'any':
+            COMMAND = ['youtube-dl', '--no-playlist', '--o', '%(title)s.%(ext)s', URL]
+        if _format == 'mp4':
+            COMMAND = ['youtube-dl', '--no-playlist', '-f', 'bestvideo[ext=mp4]+bestaudio[ext=m4a]',
+                       '--o', '%(title)s.%(ext)s', URL]
 
         # Extra options
         # '--newline',
@@ -208,7 +208,8 @@ if __name__ == "__main__":
                         help="Extract the audio from the video(s)")
     parser.add_argument('-c', '--clean-filenames', action='store_true',
                         help="Trims out junk from the video and audio filenames.")
-
+    parser.add_argument('-f', '--format', type=str, choices=['mp4'], default='any',
+                        help="Force the video to the chosen file format.")
     args = parser.parse_args()
 
     if args.audio:
@@ -231,11 +232,12 @@ if __name__ == "__main__":
 
     if args.info:
         print('Video info ON!')
+        print('Video format is {}'.format(args.format))
         if args.verbose:
             for i, u in enumerate(urls):
                 print('URL #{:3}: {}'.format(i, u))
     else:
-        download_urls(urls)
+        download_urls(urls, _format=args.format)
 
     if args.clean_filenames:
         print('Cleaning up filenames')
