@@ -5,20 +5,12 @@ import subprocess
 import substitutions
 import time
 import upgrades
-
 """
-Leeching music from youtube.
-
-youtube-dl
-batch-download option
-youtube-dl just downloads the file as its native mp3 formt.
-ffmpeg: can convert video files from one format to another.
-
-Note: To manually download all a users videos, use:
-
+Advanced wrapper for youtube-dl. Makes downloading and converting videos much easier.
 """
 
 VID_EXTENSIONS = tuple(['.mp4', '.mkv', '.webm', '.avi'])
+TEMPDIR = './temp_youtube/'
 
 
 def get_user_picks():
@@ -59,14 +51,14 @@ def clean_filenames():
 
 
 def remove_spaces_in_filenames():
-    for file in os.listdir('.'):
+    for file in os.listdir(TEMPDIR):
         if file.endswith(VID_EXTENSIONS):
             newname = file.replace(' ', '_')
-            os.rename(file, newname)
+            os.rename(TEMPDIR + file, TEMPDIR + newname)
 
 
 def trim_filenames():
-    for file in os.listdir('.'):
+    for file in os.listdir(TEMPDIR):
         if file.endswith(VID_EXTENSIONS):
             newname = file
 
@@ -75,7 +67,7 @@ def trim_filenames():
             elif file.startswith(' ') or file.startswith('_'):
                 newname = file[1:]
 
-            os.rename(file, newname)
+            os.rename(TEMPDIR + file, TEMPDIR + newname)
 
 
 def remove_title_garbage():
@@ -83,17 +75,17 @@ def remove_title_garbage():
     Clean out junk from the filename. Uses the substitution dictionary in substitutions. These
     entries are usually meaningless or captalized keywords.
     """
-    for file in os.listdir('.'):
+    for file in os.listdir(TEMPDIR):
         if file.endswith(VID_EXTENSIONS) or file.endswith('.mp3'):
             newname = file
             for k, v in substitutions.SUBS.iteritems():
                 newname = newname.replace(k, v)
 
-            os.rename(file, newname)
+            os.rename(TEMPDIR + file, TEMPDIR + newname)
 
 
 def clean_title_characters():
-    for file in os.listdir('.'):
+    for file in os.listdir(TEMPDIR):
         if file.endswith(VID_EXTENSIONS):
             newname = file.replace('(', '[')
             newname = newname.replace(')', ']')
@@ -101,18 +93,21 @@ def clean_title_characters():
             newname = newname.replace(',', '')
             newname = newname.replace('!', '')
             newname = newname.replace('&', 'x')
-            os.rename(file, newname)
+            os.rename(TEMPDIR + file, TEMPDIR + newname)
 
 
 def download_urls(urls, _format):
     for URL in urls:
         #  os.system('youtube-dl --max-quality --o "%(title)s.%(ext)s" {}'.format(i))
 
+        #  filename = '{}%(title)s.%(ext)s'.format(TEMPDIR),
+        filename = TEMPDIR + r'%(title)s.%(ext)s'
+
         if _format == 'any':
-            COMMAND = ['youtube-dl', '--no-playlist', '--o', '%(title)s.%(ext)s', URL]
+            COMMAND = ['youtube-dl', '--no-playlist', '--o', str(filename), URL]
         if _format == 'mp4':
             COMMAND = ['youtube-dl', '--no-playlist', '-f', 'bestvideo[ext=mp4]+bestaudio[ext=m4a]',
-                       '--o', '%(title)s.%(ext)s', URL]
+                       '--o', filename, URL]
 
         # Extra options
         # '--newline',
@@ -130,7 +125,7 @@ def download_urls(urls, _format):
 def get_video_list():
     downloaded = []
 
-    for file in os.listdir('.'):
+    for file in os.listdir(TEMPDIR):
         if file.endswith(VID_EXTENSIONS):
             downloaded.append(file)
     return downloaded
@@ -142,22 +137,28 @@ def extract_audio(filelist, audioformat):
 
     for _file in filelist:
         print('Trying to convert {}'.format(_file))
-        dot = _file.find('.')
+        dot = _file.find(TEMPDIR)
         newname = _file[:dot]
         #  os.system('ffmpeg -i {} {}.mp3'.format(x, x))
         #  fname = x.replace(' ', '')
         os.system('ffmpeg -i {} {}.{}'.format(_file, newname, audioformat))
 
 
-def cleanup():
-    print ('Finished converting. Cleaning up: ')
-    time.sleep(3)
+def ensure_dir(_dir):
+    if not os.path.exists(_dir):
+        os.makedirs(_dir)
 
-    for file in os.listdir('.'):
+
+def cleanup():
+    print ('Cleaning up filenames in {}: '.format(TEMPDIR))
+
+    for file in os.listdir(TEMPDIR):
         if file.endswith('.mp3'):
             for ext in VID_EXTENSIONS:
+
                 # Only delete if the video counterpart exists!
                 vid = file.replace('.mp3', ext)
+
                 if os.path.exists(vid):
                     #  os.system('rm ' + file)
                     os.remove(vid)  # This is better.
@@ -214,18 +215,13 @@ if __name__ == "__main__":
                 print('URL #{:3}: {}'.format(i, u))
     else:
         download_urls(urls, _format=args.format)
+        print('Finished downloading queue.')
+
+        if args.audio:
+            downloaded = get_video_list()
+            extract_audio(downloaded, format)
+            cleanup()
 
     if args.clean_filenames:
         print('Cleaning up filenames')
         clean_filenames()
-    exit()
-
-    print('Finished downloading queue. Finding downloaded videos: ')
-    downloaded = get_video_list()
-
-    #  print('here are the found files: ')
-    #  print('[{}]'.format('\n').join(map(str, downloaded)))
-
-    if format != 'vid':
-        extract_audio(downloaded, format)
-        cleanup()
