@@ -12,6 +12,7 @@ Note: To manually download all a users videos, use:
 """
 
 import argparse
+import substitutions
 import os
 import subprocess
 import time
@@ -109,62 +110,16 @@ def trim_filenames():
 
 
 def remove_title_garbage():
+    """
+    Clean out junk from the filename. Uses the substitution dictionary in substitutions. These
+    entries are usually meaningless or captalized keywords.
+    """
     for file in os.listdir('.'):
         if file.endswith(VID_EXTENSIONS) or file.endswith('.mp3'):
-            newname = file.replace('[1080p]', '')
-            newname = newname.replace('[song]', '')
-            newname = newname.replace('(Song)', '')
-            newname = newname.replace('[Song]', '')
-            newname = newname.replace('(+Lyrics)', '')
-            newname = newname.replace('_Lyrics', '')
-            newname = newname.replace('MLP: FiM', 'MLP -')
-            newname = newname.replace('MLP -FiM', 'MLP -')
-            newname = newname.replace('My Little Pony - Friendship is Magic', 'MLP')
-            newname = newname.replace('My_little_Pony', 'MLP')
-            newname = newname.replace('| Music | ', '')
-            newname = newname.replace('_ Music _ ', '')
-            newname = newname.replace('| HD', '')
-            newname = newname.replace('HD', '')
-            newname = newname.replace(' _ HD', '')
-            newname = newname.replace('(HQ)', '')
-            newname = newname.replace('PMV', '')
-            newname = newname.replace('AMV', '')
-            newname = newname.replace('OST', '')
-            newname = newname.replace('VIP', '')
-            newname = newname.replace('M-V', '')
-            newname = newname.replace('[WIP]', '')
-            newname = newname.replace('[Electro]', '')
-            newname = newname.replace('[HOUSE]', '')
-            newname = newname.replace('[Dubstep]', '')
-            newname = newname.replace('[Now_on_iTunes!]', '')
-            newname = newname.replace('[EUROBEAT]', '')
-            newname = newname.replace('[Hardstyle]', '')
-            newname = newname.replace('[Drum_and_Bass]', '')
-            newname = newname.replace('[Explicit]', '')
-            newname = newname.replace('FULL VERSION', '')
-            newname = newname.replace('full version', '')
-            newname = newname.replace('full_version', '')
-            newname = newname.replace('(video version)', '')
-            newname = newname.replace('(Ultra Music)', '')
-            newname = newname.replace('EPILEPSY_WARNING!', '')
-            newname = newname.replace('EPILEPSY_WARNING', '')
-            newname = newname.replace('[OFFICIAL]', '')
-            newname = newname.replace('[OFFICIAL VIDEO]', '')
-            newname = newname.replace('(Official_Video)', '')
-            newname = newname.replace('(Official Video)', '')
-            newname = newname.replace('(Official videoclip)', '')
-            newname = newname.replace('(Official Music Video)', '')
-            newname = newname.replace('(Official Video HQ)', '')
-            newname = newname.replace('(Out Now)', '')
-            newname = newname.replace('Music Video', '')
-            newname = newname.replace('[Chiptune_8-bit]', '')
-            newname = newname.replace('[]', '')
+            newname = file
+            for k, v in substitutions.SUBS.iteritems():
+                newname = newname.replace(k, v)
 
-            newname = newname.replace(' .mp4', '.mp4')
-            newname = newname.replace('_.mp4', '.mp4')
-            newname = newname.replace('_.mp3', '.mp3')
-            newname = newname.replace('_.mp3', '.mp3')
-            newname = newname.replace('..', '.')
             os.rename(file, newname)
 
 
@@ -279,9 +234,8 @@ if __name__ == "__main__":
     else:
         download_urls(urls)
 
-    exit()
-
     clean_filenames()
+    exit()
 
     print('Finished downloading queue. Finding downloaded videos: ')
     downloaded = get_video_list()
