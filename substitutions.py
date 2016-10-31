@@ -1,55 +1,75 @@
+"""
+These are junk terms that commonly occur:
+Variations: parentheses/brackets, uppercase, lowercase, or Title Style.
+And with spaces or underscores
+
+Ex: 'song' can come as:
+    [epilepsy warning], [EPILEPSY WARNING], [Epilepsy Warning]
+    [epilepsy_warning], [EPILEPSY_WARNING], [Epilepsy_Warning]
+    (epilepsy warning), (EPILEPSY WARNING), (Epilepsy Warning)
+    (epilepsy_warning), (EPILEPSY_WARNING), (Epilepsy_Warning)
+
+This should cover a LOT of the junk that occurs, and any more specific stuff can be added to
+JUNK
+"""
+KEYWORDS = [
+    '1080P',
+    'AMV',
+    'CHIPTUNE 8-BIT',
+    'DRUM AND BASS',
+    'DUBSTEP',
+    'ELECTRO',
+    'EPILEPSY WARNING',
+    'EUROBEAT',
+    'EXPLICIT',
+    'FULL VERSION',
+    'HARDSTYLE',
+    'HD',
+    'HOUSE',
+    'HQ',
+    'LYRICS',
+    'M-V',
+    'MUSIC VIDEO',
+    'OFFICIAL MUSIC VIDEO',
+    'OFFICIAL VIDEO HQ',
+    'OFFICIAL VIDEO',
+    'OFFICIAL VIDEOCLIP',
+    'OFFICIAL',
+    'OST',
+    'OUT NOW',
+    'PMV',
+    'SONG',
+    'ULTRA MUSIC',
+    'VIDEO VERSION',
+    'VIP',
+    'WIP',
+
+JUNK = [
+    '| MUSIC |',
+    '_ Music _ ',
+    '| HD',
+    ' _ HD',
+    'EPILEPSY_WARNING!',
+    '+Lyrics',
+    'now on iTunes!',
+]
+
 SUBS = {
-    '[1080p]': '',
-    '[song]': '',
-    '(Song)': '',
-    '[Song]': '',
-    '(+Lyrics)': '',
-    '_Lyrics': '',
     'MLP: FiM': 'MLP -',
     'MLP -FiM': 'MLP -',
     'My Little Pony - Friendship is Magic': 'MLP',
     'My_little_Pony': 'MLP',
-    '| Music | ': '',
-    '_ Music _ ': '',
-    '| HD': '',
-    'HD': '',
-    ' _ HD': '',
-    '(HQ)': '',
-    'PMV': '',
-    'AMV': '',
-    'OST': '',
-    'VIP': '',
-    'M-V': '',
-    '[WIP]': '',
-    '[Electro]': '',
-    '[HOUSE]': '',
-    '[Dubstep]': '',
-    '[Now_on_iTunes!]': '',
-    '[EUROBEAT]': '',
-    '[Hardstyle]': '',
-    '[Drum_and_Bass]': '',
-    '[Explicit]': '',
-    'FULL VERSION': '',
-    'full version': '',
-    'full_version': '',
-    '(video version)': '',
-    '(Ultra Music)': '',
-    'EPILEPSY_WARNING!': '',
-    'EPILEPSY_WARNING': '',
-    '[OFFICIAL]': '',
-    '[OFFICIAL VIDEO]': '',
-    '(Official_Video)': '',
-    '(Official Video)': '',
-    '(Official videoclip)': '',
-    '(Official Music Video)': '',
-    '(Official Video HQ)': '',
-    '(Out Now)': '',
-    'Music Video': '',
-    '[Chiptune_8-bit]': '',
-    '[]': '',
-    ' .mp4': '.mp4',
-    '_.mp4': '.mp4',
-    '_.mp3': '.mp3',
-    '_.mp3': '.mp3',
+}
+
+
+
+SANITIZATIONS = {
+    '(': '['  # Parentheses aren't linux friendly
+    ')': ']'
+    '\'': ''  # Slashes are not filename friendly
+    '/': ''   # Slashes are not filename friendly
+    ',': ''
+    '!': ''
+    '&': 'x'  # Use x instead of &
     '..': '.',
 }

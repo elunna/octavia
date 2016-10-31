@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import argparse
+import filenames
 import os
 import subprocess
-import substitutions
 import time
 import upgrades
 """
@@ -43,59 +43,6 @@ def parse_user_list(filename):
         return urls
 
 
-def clean_filenames():
-    remove_title_garbage()
-    remove_spaces_in_filenames()
-    clean_title_characters()
-    trim_filenames()
-
-
-def remove_spaces_in_filenames():
-    for file in os.listdir(TEMPDIR):
-        if file.endswith(VID_EXTENSIONS):
-            newname = file.replace(' ', '_')
-            os.rename(TEMPDIR + file, TEMPDIR + newname)
-
-
-def trim_filenames():
-    for file in os.listdir(TEMPDIR):
-        if file.endswith(VID_EXTENSIONS):
-            newname = file
-
-            if file.startswith(' - ') or file.startswith('_-_'):
-                newname = file[3:]
-            elif file.startswith(' ') or file.startswith('_'):
-                newname = file[1:]
-
-            os.rename(TEMPDIR + file, TEMPDIR + newname)
-
-
-def remove_title_garbage():
-    """
-    Clean out junk from the filename. Uses the substitution dictionary in substitutions. These
-    entries are usually meaningless or captalized keywords.
-    """
-    for file in os.listdir(TEMPDIR):
-        if file.endswith(VID_EXTENSIONS) or file.endswith('.mp3'):
-            newname = file
-            for k, v in substitutions.SUBS.iteritems():
-                newname = newname.replace(k, v)
-
-            os.rename(TEMPDIR + file, TEMPDIR + newname)
-
-
-def clean_title_characters():
-    for file in os.listdir(TEMPDIR):
-        if file.endswith(VID_EXTENSIONS):
-            newname = file.replace('(', '[')
-            newname = newname.replace(')', ']')
-            newname = newname.replace('\'', '')
-            newname = newname.replace(',', '')
-            newname = newname.replace('!', '')
-            newname = newname.replace('&', 'x')
-            os.rename(TEMPDIR + file, TEMPDIR + newname)
-
-
 def download_urls(urls, _format):
     for URL in urls:
         #  os.system('youtube-dl --max-quality --o "%(title)s.%(ext)s" {}'.format(i))
@@ -123,12 +70,9 @@ def download_urls(urls, _format):
 
 
 def get_video_list():
-    downloaded = []
-
-    for file in os.listdir(TEMPDIR):
-        if file.endswith(VID_EXTENSIONS):
-            downloaded.append(file)
-    return downloaded
+    return [''.join([TEMPDIR, f])
+            for f in os.listdir(TEMPDIR)
+            if file.endswith(VID_EXTENSIONS)]
 
 
 def extract_audio(filelist, audioformat):
@@ -137,10 +81,9 @@ def extract_audio(filelist, audioformat):
 
     for _file in filelist:
         print('Trying to convert {}'.format(_file))
-        dot = _file.find(TEMPDIR)
+        # Assumes no dots in directory structure, and no dots in middle of video name.
+        dot = _file.find('.')
         newname = _file[:dot]
-        #  os.system('ffmpeg -i {} {}.mp3'.format(x, x))
-        #  fname = x.replace(' ', '')
         os.system('ffmpeg -i {} {}.{}'.format(_file, newname, audioformat))
 
 
@@ -220,8 +163,8 @@ if __name__ == "__main__":
         if args.audio:
             downloaded = get_video_list()
             extract_audio(downloaded, format)
-            cleanup()
+            cleanup(downloaded)
 
     if args.clean_filenames:
         print('Cleaning up filenames')
-        clean_filenames()
+        filenames.clean()
