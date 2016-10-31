@@ -16,7 +16,7 @@ import os
 import subprocess
 import time
 
-VID_EXTENSIONS = tuple(['.mp4', '.mkv', '.webm'])
+VID_EXTENSIONS = tuple(['.mp4', '.mkv', '.webm', '.avi'])
 DL_FFMPEG = 'http://ffmpeg.gusari.org/statis/32bit/ffmpeg.static.32bit.latest.tar.gz'
 
 
@@ -73,7 +73,12 @@ def parse_user_list(filename):
     """
     with open(filename, 'r') as f:
         # We'll be pretty liberal in what we take - youtube-dl should do the error checking.
-        return [line.strip() for line in f if line]
+        urls = []
+        for line in f:
+            line = line.strip()
+            if line.startswith('http'):  # This is a start...
+                urls.append(line)
+        return urls
 
 
 def clean_filenames():
@@ -248,12 +253,6 @@ if __name__ == "__main__":
                         help="Extract the audio from the video(s)")
     args = parser.parse_args()
 
-    if args.verbose:
-        print('Verbose mode ON!')
-
-    if args.info:
-        print('Video info ON!')
-
     if args.audio:
         print('Extracting audio to {}'.format(args.audio))
     else:
@@ -272,13 +271,15 @@ if __name__ == "__main__":
     else:
         urls = get_user_picks()
 
-    if args.verbose:
-        for u in urls:
-            print(u)
+    if args.info:
+        print('Video info ON!')
+        if args.verbose:
+            for i, u in enumerate(urls):
+                print('URL #{:3}: {}'.format(i, u))
+    else:
+        download_urls(urls)
 
     exit()
-
-    download_urls(urls)
 
     clean_filenames()
 
