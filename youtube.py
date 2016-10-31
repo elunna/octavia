@@ -1,4 +1,11 @@
 #!/usr/bin/env python
+import argparse
+import os
+import subprocess
+import substitutions
+import time
+import upgrades
+
 """
 Leeching music from youtube.
 
@@ -11,45 +18,7 @@ Note: To manually download all a users videos, use:
 
 """
 
-import argparse
-import substitutions
-import os
-import subprocess
-import time
-
 VID_EXTENSIONS = tuple(['.mp4', '.mkv', '.webm', '.avi'])
-DL_FFMPEG = 'http://ffmpeg.gusari.org/statis/32bit/ffmpeg.static.32bit.latest.tar.gz'
-
-
-def checkprograms():
-    print('Checking for youtube-dl and FFMpeg...')
-    time.sleep(3)
-
-    os.system("cd /usr/local/bin")
-    if not os.path.exists('/usr/local/bin/youtube-dl'):
-        print("youtube-dl is not installed. Installing now.")
-        time.sleep(3)
-        os.system('sudo apt-get install youtube-dl')
-
-        print('youtube-dl has been installed.')
-        print('Now update youtube-dl...')
-        os.system('sudo /usr/local/bin/youtube-dl -U')
-
-    else:
-        print('Checking for update to youtube-dl...')
-        os.system('sudo /usr/local/bin/youtube-dl -U')
-
-    if not os.path.exists('/usr/local/bin/ffmpeg'):
-        print('FFMpeg is not installed. Installing now.')
-        time.sleep(3)
-        os.system('sudo wget {} -O /usr/local/bin/ffmpeg.tar.gz'.format(DL_FFMPEG))
-        os.system('sudo tar -zxvf /sr/local/bin/*.tar.gz -C /usr/local/bin')
-        os.system('sudo chmod a+x /sr/local/bin/ffmpeg')
-        os.system('sudo chmod a+x /usr/local/bin/ffprobe')
-        os.system('sudo rm ffmpeg.tar.gz')
-        print('FFMpeg has been installed.')
-    else:
-        print('FFMpeg is already installed.')
 
 
 def get_user_picks():
@@ -210,7 +179,14 @@ if __name__ == "__main__":
                         help="Trims out junk from the video and audio filenames.")
     parser.add_argument('-f', '--format', type=str, choices=['mp4'], default='any',
                         help="Force the video to the chosen file format.")
+    parser.add_argument('-U', '--upgrade', action='store_true',
+                        help="Check for the latest versions of youtube-dl and ffmpeg, and also install them if not present.")
     args = parser.parse_args()
+
+    if args.upgrade:
+        upgrades.youtube_dl()
+        upgrades.ffmpeg()
+        exit()
 
     if args.audio:
         print('Extracting audio to {}'.format(args.audio))
