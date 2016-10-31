@@ -206,6 +206,9 @@ if __name__ == "__main__":
                         help="Download a pre-made text file of urls.")
     parser.add_argument('-a', '--audio', type=str, choices=['wav', 'mp3'],
                         help="Extract the audio from the video(s)")
+    parser.add_argument('-c', '--clean-filenames', action='store_true',
+                        help="Trims out junk from the video and audio filenames.")
+
     args = parser.parse_args()
 
     if args.audio:
@@ -234,7 +237,9 @@ if __name__ == "__main__":
     else:
         download_urls(urls)
 
-    clean_filenames()
+    if args.clean_filenames:
+        print('Cleaning up filenames')
+        clean_filenames()
     exit()
 
     print('Finished downloading queue. Finding downloaded videos: ')
