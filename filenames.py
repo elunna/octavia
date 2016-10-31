@@ -55,6 +55,26 @@ def trim(filename):
     return newname + ext.strip()
 
 
+def rm_junk(filename):
+    """
+    Takes a base filename (or string) and removes YouTube junk that commonly appears in titles.
+    Uses the KEYWORDS list in substitutions to generate common variations that can appear.
+    """
+    for k in substitutions.KEYWORDS:
+        for c in kw_combos(k):
+            filename = filename.replace(c, '')
+    return filename
+
+
+def sanitize(filename):
+    """
+    Takes a base filename (or string) and removes potentially harmful or disruptive characters.
+    """
+    for k, v in substitutions.SANITIZATIONS.items():
+        filename = filename.replace(k, v)
+    return filename
+
+
 def kw_cases(keyword):
     """
     Returns 3 variations on a passed keyword string: uppercase, lowercase, and Title Case.
@@ -74,23 +94,3 @@ def kw_combos(keyword):
 
     # Make bracket variations
     return ['[' + c + ']' for c in cases]
-
-
-def rm_junk(filename):
-    """
-    Takes a base filename (or string) and removes YouTube junk that commonly appears in titles.
-    Uses the KEYWORDS list in substitutions to generate common variations that can appear.
-    """
-    for k in substitutions.KEYWORDS:
-        for c in kw_combos(k):
-            filename = filename.replace(c, '')
-    return filename
-
-
-def sanitize(filename):
-    """
-    Takes a base filename (or string) and removes potentially harmful or disruptive characters.
-    """
-    for k, v in substitutions.SANITIZATIONS.items():
-        filename = filename.replace(k, v)
-    return filename

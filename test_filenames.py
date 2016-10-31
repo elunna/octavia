@@ -39,6 +39,29 @@ def test_rm_spaces_filename():
 
 
 """
+Tests for correct_spacing(filename):
+"""
+
+
+def test_correctspacing_singles():
+    t = 'The Smile Song'
+    expected = 'The Smile Song'
+    assert filenames.correct_spacing(t) == expected
+
+
+def test_correctspacing_double():
+    t = 'The  Smile Song'
+    expected = 'The Smile Song'
+    assert filenames.correct_spacing(t) == expected
+
+
+def test_correctspacing_triple():
+    t = 'The  Smile   Song'
+    expected = 'The Smile Song'
+    assert filenames.correct_spacing(t) == expected
+
+
+"""
 Tests for trim
 """
 
@@ -103,29 +126,6 @@ def test_rmjunk_ugly():
     t = filenames.sanitize(t)  # Sanitize should be used first
     expected = 'The Smile Song'
     assert filenames.rm_junk(t) == expected
-
-
-"""
-Tests for correct_spacing(filename):
-"""
-
-
-def test_correctspacing_singles():
-    t = 'The Smile Song'
-    expected = 'The Smile Song'
-    assert filenames.correct_spacing(t) == expected
-
-
-def test_correctspacing_double():
-    t = 'The  Smile Song'
-    expected = 'The Smile Song'
-    assert filenames.correct_spacing(t) == expected
-
-
-def test_correctspacing_triple():
-    t = 'The  Smile   Song'
-    expected = 'The Smile Song'
-    assert filenames.correct_spacing(t) == expected
 
 
 """
