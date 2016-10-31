@@ -13,7 +13,6 @@ Note: To manually download all a users videos, use:
 
 import argparse
 import os
-import sys
 import subprocess
 import time
 
@@ -52,27 +51,29 @@ def checkprograms():
         print('FFMpeg is already installed.')
 
 
-def dl_userpicks():
+def get_user_picks():
+    """
+    Let the user input links one at a time. Terminate by entering a blank entry.
+    """
     urls = []
-    currenturl = '1'
-
-    while currenturl != '':
-        currenturl = raw_input('Enter URL (ENTER to begin downloading: ')
-        if currenturl == '':
+    while True:
+        currenturl = raw_input('Video URL: ')
+        if currenturl:
+            urls.append(currenturl)
+        else:
             break
-        urls.append(currenturl)
 
-    print ('done with queue entry. Downloading videos from Youtube:')
-    time.sleep(2)
+    print ('Done with queue entry. Downloading videos:')
     return urls
 
 
-def dl_userlist():
-    urls = []
-    with open(sys.argv[1], 'r') as f:
-        for line in f:
-            urls.append(line)
-    return urls
+def parse_user_list(filename):
+    """
+    Read the urls from the file and return as a list.
+    """
+    with open(filename, 'r') as f:
+        # We'll be pretty liberal in what we take - youtube-dl should do the error checking.
+        return [line.strip() for line in f if line]
 
 
 def clean_filenames():
@@ -266,11 +267,16 @@ if __name__ == "__main__":
             print('File {} does not exist!')
             exit()
 
-    exit()
-    if args.list == 'userlist':
-        urls = dl_userlist()
+    if args.list:
+        urls = parse_user_list(args.list)
     else:
-        urls = dl_userpicks()
+        urls = get_user_picks()
+
+    if args.verbose:
+        for u in urls:
+            print(u)
+
+    exit()
 
     download_urls(urls)
 
