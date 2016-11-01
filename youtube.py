@@ -38,7 +38,9 @@ def parse_user_list(filename):
         urls = []
         for line in f:
             line = line.strip()
-            if line.startswith('http'):  # This is a start...
+            if line.startswith('#'):       # It's a comment
+                continue
+            elif line.startswith('http'):  # This is a start...
                 urls.append(line)
         return urls
 
@@ -64,7 +66,7 @@ def download_urls(urls, _format):
         # '--o', '\"%(title)s.%(ext)s\"',
         # '--max-quality',
 
-        # only get the best audio: -f bestaudio
+        # only gee the best audio: -f bestaudio
         p = subprocess.Popen(COMMAND, stdin=subprocess.PIPE)
         p.wait()
 
@@ -151,7 +153,6 @@ if __name__ == "__main__":
         urls = get_user_picks()
 
     if args.info:
-        print('Video info ON!')
         print('Video format is {}'.format(args.format))
         if args.verbose:
             for i, u in enumerate(urls):
@@ -160,11 +161,11 @@ if __name__ == "__main__":
         download_urls(urls, _format=args.format)
         print('Finished downloading queue.')
 
-        if args.audio:
-            downloaded = get_video_list()
-            extract_audio(downloaded, format)
-            cleanup(downloaded)
+    vidlist = get_video_list()
+    if args.audio:
+        extract_audio(vidlist, format)
+        cleanup(vidlist)
 
     if args.clean_filenames:
         print('Cleaning up filenames')
-        filenames.clean()
+        filenames.clean(filenames)

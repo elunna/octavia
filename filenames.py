@@ -8,7 +8,8 @@ def cleanlist(filelist):
     Thoroughly cleans a list of filenames.
     """
     for f in filelist:
-        clean(f)
+        newname = clean(f)
+        os.rename(f)
 
 
 def clean(filename):
