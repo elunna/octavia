@@ -101,7 +101,8 @@ def cleanup():
                 vid = file.replace('.mp3', ext)
 
                 if os.path.exists(vid):
-                    os.remove(vid)  # This is better.
+                    print('Deleting {}'.format(vid))
+                    os.remove(vid)
 
 
 if __name__ == "__main__":
@@ -122,6 +123,9 @@ if __name__ == "__main__":
                         help="Force the video to the chosen file format.")
     parser.add_argument('-U', '--upgrade', action='store_true',
                         help="Check for the latest versions of youtube-dl and ffmpeg, and also install them if not present.")
+    parser.add_argument('-k', '--keep-vids', action='store_true',
+                        help="Keeps the videos that have been converted to audio, the default is to remove them.")
+
     args = parser.parse_args()
 
     if args.upgrade:
@@ -149,10 +153,12 @@ if __name__ == "__main__":
         download_urls(urls, _format=args.format)
 
     vidlist = get_video_list()
-    print(vidlist)
 
     if args.audio:
         extract_audio(vidlist, args.audio)
+
+    if not args.keep_vids:
+        cleanup()
 
     if args.clean_filenames:
         filenames.clean(filenames)
