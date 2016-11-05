@@ -45,44 +45,37 @@ def parse_user_list(filename):
     return urls
 
 
-def download_urls(urls, _format):
+def download_urls(urls, _dir, _format):
     for URL in urls:
-        #  os.system('youtube-dl --max-quality --o "%(title)s.%(ext)s" {}'.format(i))
+        filename = _dir + '/%(title)s.%(ext)s'
 
-        filename = '%(title)s.%(ext)s'
+        options = [
+            'youtube-dl',
+            '--restrict-filenames',
+            '--no-playlist', '--o',
+        ]
 
-        if _format == 'any':
-            COMMAND = ['youtube-dl', '--restrict-filenames', '--no-playlist', '--o', str(filename), URL]
         if _format == 'mp4':
-            COMMAND = ['youtube-dl', '--restrict-filenames', '--no-playlist', '-f', 'bestvideo[ext=mp4]+bestaudio[ext=m4a]',
-                       '--o', filename, URL]
+            options.extend(['-f', 'bestvideo[ext=mp4]+bestaudio[ext=m4a]'])
 
-        # Extra options
-        # '--newline',
-        # '--verbose',
-        # '-f', 'bestaudio',
-        # '--extract-audio',
+        options.extend([filename, URL])
 
-        p = subprocess.Popen(COMMAND, stdin=subprocess.PIPE)
+        p = subprocess.Popen(options, stdin=subprocess.PIPE)
         p.wait()
 
 
-def get_video_list():
-    return [f for f in os.listdir('.') if f.endswith(VID_EXTENSIONS)]
+def get_video_list(_dir):
+    return ['/'.join([_dir, f]) for f in os.listdir(_dir) if f.endswith(VID_EXTENSIONS)]
 
 
 def extract_audio(filelist, audioformat='mp3'):
     time.sleep(2)
+
     for f in filelist:
-        print('Trying to convert {}'.format(f))
-        # Assumes no dots in directory structure, and no dots in middle of video name.
-        dot = f.find('.')
+        dot = f.rfind('.')  # Look for the dot from the right!
         newname = '{}.{}'.format(f[:dot], audioformat)
 
         cmd = ['ffmpeg', '-n', '-i', f, newname]
-        print('newname = {}'.format(newname))
-        print('cmd = {}'.format(cmd))
-        #  os.system('ffmpeg -i {} {}.{}'.format(f, newname, audioformat))
         p = subprocess.Popen(cmd)
         p.wait()
 
@@ -92,16 +85,16 @@ def ensure_dir(_dir):
         os.makedirs(_dir)
 
 
-def cleanup():
-    for file in os.listdir('.'):
+def cleanup(_dir):
+    for file in os.listdir(_dir):
         if file.endswith('.mp3'):
             for ext in VID_EXTENSIONS:
 
                 # Only delete if the video counterpart exists!
-                vid = file.replace('.mp3', ext)
+                vid = _dir + '/' + file.replace('.mp3', ext)
 
                 if os.path.exists(vid):
-                    print('Deleting {}'.format(vid))
+                    print('Deleting {}/{}'.format(_dir, vid))
                     os.remove(vid)
 
 
@@ -147,16 +140,8 @@ if __name__ == "__main__":
     else:
         urls = get_user_picks()
 
-    if args.info:
-        print('Video format is {}'.format(args.format))
-        if args.verbose:
-            for i, u in enumerate(urls):
-                print('URL #{:3}: {}'.format(i, u))
-    else:
-        print('Downloading to {}'.format(args.dir))
-        download_urls(urls, _format=args.format)
-
-    vidlist = get_video_list()
+    download_urls(urls, _dir=args.dir, _format=args.format)
+    vidlist = get_video_list(_dir=args.dir)
 
     if not args.video_only:
         if args.audio:
@@ -165,7 +150,7 @@ if __name__ == "__main__":
             extract_audio(vidlist)
 
     if not args.keep_vids:
-        cleanup()
+        cleanup(_dir=args.dir)
 
     if args.clean_filenames:
         filenames.clean(filenames)
