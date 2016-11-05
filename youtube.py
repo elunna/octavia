@@ -1,16 +1,16 @@
 #!/usr/bin/env python
+"""
+Advanced wrapper for youtube-dl. Makes downloading and converting videos much easier.
+"""
 import argparse
 import filenames
 import os
 import subprocess
-import time
 import upgrades
-"""
-Advanced wrapper for youtube-dl. Makes downloading and converting videos much easier.
-"""
+import time
+
 
 VID_EXTENSIONS = tuple(['.mp4', '.mkv', '.webm', '.avi'])
-TEMPDIR = './temp_youtube/'
 
 
 def get_user_picks():
@@ -49,13 +49,12 @@ def download_urls(urls, _format):
     for URL in urls:
         #  os.system('youtube-dl --max-quality --o "%(title)s.%(ext)s" {}'.format(i))
 
-        #  filename = '{}%(title)s.%(ext)s'.format(TEMPDIR),
-        filename = TEMPDIR + r'%(title)s.%(ext)s'
+        filename = '%(title)s.%(ext)s'
 
         if _format == 'any':
-            COMMAND = ['youtube-dl', '--no-playlist', '--o', str(filename), URL]
+            COMMAND = ['youtube-dl', '--restrict-filenames', '--no-playlist', '--o', str(filename), URL]
         if _format == 'mp4':
-            COMMAND = ['youtube-dl', '--no-playlist', '-f', 'bestvideo[ext=mp4]+bestaudio[ext=m4a]',
+            COMMAND = ['youtube-dl', '--restrict-filenames', '--no-playlist', '-f', 'bestvideo[ext=mp4]+bestaudio[ext=m4a]',
                        '--o', filename, URL]
 
         # Extra options
@@ -63,30 +62,29 @@ def download_urls(urls, _format):
         # '--verbose',
         # '-f', 'bestaudio',
         # '--extract-audio',
-        # '--o', '\"%(title)s.%(ext)s\"',
-        # '--max-quality',
 
-        # only gee the best audio: -f bestaudio
         p = subprocess.Popen(COMMAND, stdin=subprocess.PIPE)
         p.wait()
 
 
 def get_video_list():
-    return [''.join([TEMPDIR, f])
-            for f in os.listdir(TEMPDIR)
-            if file.endswith(VID_EXTENSIONS)]
+    return [f for f in os.listdir('.') if f.endswith(VID_EXTENSIONS)]
 
 
 def extract_audio(filelist, audioformat):
-    print ('Now converting videos: ')
     time.sleep(2)
-
-    for _file in filelist:
-        print('Trying to convert {}'.format(_file))
+    for f in filelist:
+        print('Trying to convert {}'.format(f))
         # Assumes no dots in directory structure, and no dots in middle of video name.
-        dot = _file.find('.')
-        newname = _file[:dot]
-        os.system('ffmpeg -i {} {}.{}'.format(_file, newname, audioformat))
+        dot = f.find('.')
+        newname = '{}.{}'.format(f[:dot], audioformat)
+
+        cmd = ['ffmpeg', '-i', f, newname]
+        print('newname = {}'.format(newname))
+        print('cmd = {}'.format(cmd))
+        #  os.system('ffmpeg -i {} {}.{}'.format(f, newname, audioformat))
+        p = subprocess.Popen(cmd)
+        p.wait()
 
 
 def ensure_dir(_dir):
@@ -95,9 +93,7 @@ def ensure_dir(_dir):
 
 
 def cleanup():
-    print ('Cleaning up filenames in {}: '.format(TEMPDIR))
-
-    for file in os.listdir(TEMPDIR):
+    for file in os.listdir('.'):
         if file.endswith('.mp3'):
             for ext in VID_EXTENSIONS:
 
@@ -105,7 +101,6 @@ def cleanup():
                 vid = file.replace('.mp3', ext)
 
                 if os.path.exists(vid):
-                    #  os.system('rm ' + file)
                     os.remove(vid)  # This is better.
 
 
@@ -131,16 +126,9 @@ if __name__ == "__main__":
 
     if args.upgrade:
         upgrades.youtube_dl()
-        upgrades.ffmpeg()
-        exit()
-
-    if args.audio:
-        print('Extracting audio to {}'.format(args.audio))
-    else:
-        print('Just downloading videos.')
 
     if args.list:
-        print('User passed in list-file {}'.format(args.list))
+        print('Received list-file {}'.format(args.list))
         if os.path.exists(args.list):
             print('File exists!')
         else:
@@ -159,13 +147,12 @@ if __name__ == "__main__":
                 print('URL #{:3}: {}'.format(i, u))
     else:
         download_urls(urls, _format=args.format)
-        print('Finished downloading queue.')
 
     vidlist = get_video_list()
+    print(vidlist)
+
     if args.audio:
-        extract_audio(vidlist, format)
-        cleanup(vidlist)
+        extract_audio(vidlist, args.audio)
 
     if args.clean_filenames:
-        print('Cleaning up filenames')
         filenames.clean(filenames)

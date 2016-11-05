@@ -1,6 +1,5 @@
 import os
 import substitutions
-from youtube import TEMPDIR
 
 
 def cleanlist(filelist):
