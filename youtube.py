@@ -105,7 +105,7 @@ def cleanup():
                     os.remove(vid)
 
 
-if __name__ == "__main__":
+def get_parser():
     parser = argparse.ArgumentParser(
         description="Wrapper for youtube-dl. Defaults to extracting audio from Youtube videos.")
 
@@ -129,7 +129,11 @@ if __name__ == "__main__":
                        help="Extract audio from the video(s) to a specific format.")
     group.add_argument('-V', '--video-only', action='store_true',
                        help="Only download videos, do not convert to audio.")
+    return parser
 
+
+if __name__ == "__main__":
+    parser = get_parser()
     args = parser.parse_args()
 
     if args.upgrade:
