@@ -45,9 +45,12 @@ def parse_user_list(filename):
     return urls
 
 
-def download_urls(urls, _dir, _format):
+def download_urls(urls, args):
     for URL in urls:
-        filename = _dir + '/%(title)s.%(ext)s'
+        if args.channel_name:
+            filename = args.dir + '/%(uploader)s_-_%(title)s.%(ext)s'
+        else:
+            filename = args.dir + '/%(title)s.%(ext)s'
 
         options = [
             'youtube-dl',
@@ -56,9 +59,11 @@ def download_urls(urls, _dir, _format):
             #  '--dump-user-agent',
             #  '--no-part',
             #  '--quiet',
+            #  '--no-overwrites',
+            #  '--ignore-errors',
         ]
 
-        if _format == 'mp4':
+        if args.format == 'mp4':
             options.extend(['-f', 'bestvideo[ext=mp4]+bestaudio[ext=m4a]'])
 
         options.extend([filename, URL])
@@ -113,6 +118,8 @@ def get_parser():
                         help="Download a pre-made text file of urls.")
     parser.add_argument('-c', '--clean-filenames', action='store_true',
                         help="Trims out junk from the video and audio filenames.")
+    parser.add_argument('-C', '--channel-name', action='store_true',
+                        help="Prepend the channel name to the file(s).")
     parser.add_argument('-f', '--format', type=str, choices=['mp4'], default='any',
                         help="Force the video to the chosen file format.")
     parser.add_argument('-U', '--upgrade', action='store_true',
@@ -143,7 +150,7 @@ if __name__ == "__main__":
     else:
         urls = get_user_picks()
 
-    download_urls(urls, _dir=args.dir, _format=args.format)
+    download_urls(urls, args=args)
     vidlist = get_video_list(_dir=args.dir)
 
     if not args.video_only:
