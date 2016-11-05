@@ -5,3 +5,8 @@ __pycache__/*
 arc/*
 temp/*
 
+*.mp3
+*.mp4
+*.avi
+*.mkv
+*.wav
