@@ -120,9 +120,11 @@ def get_parser():
     parser.add_argument('-f', '--format', type=str, choices=['mp4'], default='any',
                         help="Force the video to the chosen file format.")
     parser.add_argument('-U', '--upgrade', action='store_true',
-                        help="Check for the latest versions of youtube-dl and ffmpeg, and also install them if not present.")
+                        help="Check for the latest version of youtube-dl and install/upgrade, then exit.")
     parser.add_argument('-k', '--keep-vids', action='store_true',
                         help="Keeps the videos that have been converted to audio, the default is to remove them.")
+    parser.add_argument('-d', '--dir', action="store", default=os.curdir,
+                        help="The directory to download to.")
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-a', '--audio', type=str, choices=['wav', 'mp3'],
@@ -138,6 +140,7 @@ if __name__ == "__main__":
 
     if args.upgrade:
         upgrades.youtube_dl()
+        exit()
 
     if args.list:
         urls = parse_user_list(args.list)
@@ -150,6 +153,7 @@ if __name__ == "__main__":
             for i, u in enumerate(urls):
                 print('URL #{:3}: {}'.format(i, u))
     else:
+        print('Downloading to {}'.format(args.dir))
         download_urls(urls, _format=args.format)
 
     vidlist = get_video_list()
