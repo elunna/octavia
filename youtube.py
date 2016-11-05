@@ -71,7 +71,7 @@ def get_video_list():
     return [f for f in os.listdir('.') if f.endswith(VID_EXTENSIONS)]
 
 
-def extract_audio(filelist, audioformat):
+def extract_audio(filelist, audioformat='mp3'):
     time.sleep(2)
     for f in filelist:
         print('Trying to convert {}'.format(f))
@@ -107,16 +107,14 @@ def cleanup():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Wrapper for youtube-dl to streamline extraction of videos and music.")
+        description="Wrapper for youtube-dl. Defaults to extracting audio from Youtube videos.")
 
     parser.add_argument('-v', '--verbose', action='store_true',
-                        help="Show more explicit info on program activity.")
+                        help="Show more explicit info on the video processing.")
     parser.add_argument('-i', '--info', action='store_true',
                         help="Bypass downloading, just show info for each video.")
     parser.add_argument('-l', '--list', type=str,
                         help="Download a pre-made text file of urls.")
-    parser.add_argument('-a', '--audio', type=str, choices=['wav', 'mp3'],
-                        help="Extract the audio from the video(s)")
     parser.add_argument('-c', '--clean-filenames', action='store_true',
                         help="Trims out junk from the video and audio filenames.")
     parser.add_argument('-f', '--format', type=str, choices=['mp4'], default='any',
@@ -125,6 +123,12 @@ if __name__ == "__main__":
                         help="Check for the latest versions of youtube-dl and ffmpeg, and also install them if not present.")
     parser.add_argument('-k', '--keep-vids', action='store_true',
                         help="Keeps the videos that have been converted to audio, the default is to remove them.")
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-a', '--audio', type=str, choices=['wav', 'mp3'],
+                       help="Extract audio from the video(s) to a specific format.")
+    group.add_argument('-V', '--video-only', action='store_true',
+                       help="Only download videos, do not convert to audio.")
 
     args = parser.parse_args()
 
@@ -154,8 +158,11 @@ if __name__ == "__main__":
 
     vidlist = get_video_list()
 
-    if args.audio:
-        extract_audio(vidlist, args.audio)
+    if not args.video_only:
+        if args.audio:
+            extract_audio(vidlist, args.audio)
+        else:
+            extract_audio(vidlist)
 
     if not args.keep_vids:
         cleanup()
