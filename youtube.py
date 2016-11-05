@@ -79,7 +79,7 @@ def extract_audio(filelist, audioformat='mp3'):
         dot = f.find('.')
         newname = '{}.{}'.format(f[:dot], audioformat)
 
-        cmd = ['ffmpeg', '-i', f, newname]
+        cmd = ['ffmpeg', '-n', '-i', f, newname]
         print('newname = {}'.format(newname))
         print('cmd = {}'.format(cmd))
         #  os.system('ffmpeg -i {} {}.{}'.format(f, newname, audioformat))
