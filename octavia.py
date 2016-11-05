@@ -53,6 +53,9 @@ def download_urls(urls, _dir, _format):
             'youtube-dl',
             '--restrict-filenames',
             '--no-playlist', '--o',
+            #  '--dump-user-agent',
+            #  '--no-part',
+            #  '--quiet',
         ]
 
         if _format == 'mp4':
