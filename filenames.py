@@ -8,7 +8,7 @@ def cleanlist(filelist):
     """
     for f in filelist:
         newname = clean(f)
-        os.rename(f)
+        os.rename(f, newname)
 
 
 def clean(filename):
