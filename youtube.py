@@ -33,16 +33,16 @@ def parse_user_list(filename):
     """
     Read the urls from the file and return as a list.
     """
+    urls = []
     with open(filename, 'r') as f:
         # We'll be pretty liberal in what we take - youtube-dl should do the error checking.
-        urls = []
         for line in f:
             line = line.strip()
             if line.startswith('#'):       # It's a comment
                 continue
             elif line.startswith('http'):  # This is a start...
                 urls.append(line)
-        return urls
+    return urls
 
 
 def download_urls(urls, _format):
@@ -138,14 +138,6 @@ if __name__ == "__main__":
 
     if args.upgrade:
         upgrades.youtube_dl()
-
-    if args.list:
-        print('Received list-file {}'.format(args.list))
-        if os.path.exists(args.list):
-            print('File exists!')
-        else:
-            print('File {} does not exist!')
-            exit()
 
     if args.list:
         urls = parse_user_list(args.list)
