@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
-Advanced wrapper for youtube-dl. Makes downloading and converting videos much easier.
-"""
+  " Advanced wrapper for youtube-dl. Makes downloading and converting videos much easier.
+  """
 import argparse
 import filenames
 import os
@@ -14,9 +14,7 @@ VID_EXTENSIONS = tuple(['.mp4', '.mkv', '.webm', '.avi'])
 
 
 def get_user_picks():
-    """
-    Let the user input links one at a time. Terminate by entering a blank entry.
-    """
+    """ Let the user input links one at a time. Terminate by entering a blank entry. """
     urls = []
     while True:
         currenturl = raw_input('Video URL: ')
@@ -30,9 +28,7 @@ def get_user_picks():
 
 
 def parse_user_list(filename):
-    """
-    Read the urls from the file and return as a list.
-    """
+    """ Read the urls from the file and return as a list. """
     urls = []
     with open(filename, 'r') as f:
         # We'll be pretty liberal in what we take - youtube-dl should do the error checking.
@@ -46,6 +42,7 @@ def parse_user_list(filename):
 
 
 def download_urls(urls, args):
+    """ Performs the actual downloading and formatting of the filenames. """
     for URL in urls:
         if args.channel_name:
             filename = args.dir + '/%(uploader)s_-_%(title)s.%(ext)s'
@@ -73,10 +70,12 @@ def download_urls(urls, args):
 
 
 def get_video_list(_dir):
+    """ Retrieves a list of all videos in the specified directory. """
     return ['/'.join([_dir, f]) for f in os.listdir(_dir) if f.endswith(VID_EXTENSIONS)]
 
 
 def extract_audio(filelist, audioformat='mp3'):
+    """ Converts each video in the filelist to the specified audio format. """
     time.sleep(2)
 
     for f in filelist:
@@ -89,17 +88,19 @@ def extract_audio(filelist, audioformat='mp3'):
 
 
 def ensure_dir(_dir):
+    """ Makes sure the specified directory exists and creates it if it doesn't. """
     if not os.path.exists(_dir):
         os.makedirs(_dir)
 
 
 def cleanup(_dir):
-    for file in os.listdir(_dir):
-        if file.endswith('.mp3'):
+    """ Deletes any video files it there is an existing mp3 counterpart. """
+    for f in os.listdir(_dir):
+        if f.endswith('.mp3'):
             for ext in VID_EXTENSIONS:
 
                 # Only delete if the video counterpart exists!
-                vid = _dir + '/' + file.replace('.mp3', ext)
+                vid = _dir + '/' + f.replace('.mp3', ext)
 
                 if os.path.exists(vid):
                     print('Deleting {}/{}'.format(_dir, vid))
@@ -107,6 +108,7 @@ def cleanup(_dir):
 
 
 def get_parser():
+    """ Builds and returns the command line argument parser. """
     parser = argparse.ArgumentParser(
         description="Wrapper for youtube-dl. Defaults to extracting audio from Youtube videos.")
 
@@ -137,7 +139,8 @@ def get_parser():
     return parser
 
 
-if __name__ == "__main__":
+def main():
+    """ Main entry point. """
     parser = get_parser()
     args = parser.parse_args()
 
@@ -164,3 +167,7 @@ if __name__ == "__main__":
 
     if args.clean_filenames:
         filenames.clean(filenames)
+
+
+if __name__ == "__main__":
+    main()
