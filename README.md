@@ -1,7 +1,6 @@
-# octavia
+![](logo.png)
 > Advanced wrapper for youtube-dl. Makes downloading and converting videa breeze!
 
-![](logo.png)
 
 ### Features
 - **-** Copy and paste youtube links and bulk download.
