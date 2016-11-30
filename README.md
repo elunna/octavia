@@ -1,19 +1,11 @@
-           __            _     
- ___  ____/ /____ __  __(_)__ _
-/ _ \/ __/ __/ _ `/ |/ / / _ `/
-\___/\__/\__/\_,_/|___/_/\_,_/ 
-                               
 # octavia
 > Advanced wrapper for youtube-dl. Makes downloading and converting videa breeze!
 
-
-[Project summary]
-
-![](screenshot.png)
+![](logo.png)
 
 ### Features
-- **Feature 1** Copy and paste youtube links and bulk download.
-- **Feature 2** Cleans up common junk from video/song titles.
+- **-** Copy and paste youtube links and bulk download.
+- **-** Cleans up common junk from video/song titles.
 
 ---
 
