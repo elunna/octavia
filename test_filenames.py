@@ -1,12 +1,8 @@
+"""
+  " Tests for filenames.py
+  """
+
 import filenames
-
-"""
-Tests for clean_filelist(filelist)
-"""
-
-"""
-Tests for clean
-"""
 
 
 def test_clean_uglyfile1():
@@ -21,11 +17,6 @@ def test_clean_uglyfile2():
     assert filenames.clean(t) == expected
 
 
-"""
-Tests for rm_spaces
-"""
-
-
 def test_rm_spaces_title():
     t = 'The Smile Song'
     expected = 'The_Smile_Song'
@@ -36,11 +27,6 @@ def test_rm_spaces_filename():
     t = 'The Smile Song.mp3'
     expected = 'The_Smile_Song.mp3'
     assert filenames.rm_spaces(t) == expected
-
-
-"""
-Tests for correct_spacing(filename):
-"""
 
 
 def test_correctspacing_singles():
@@ -59,11 +45,6 @@ def test_correctspacing_triple():
     t = 'The  Smile   Song'
     expected = 'The Smile Song'
     assert filenames.correct_spacing(t) == expected
-
-
-"""
-Tests for trim
-"""
 
 
 def test_trim_spaceatstart():
@@ -102,11 +83,6 @@ def test_trim_filename_ugly():
     assert filenames.trim(t) == expected
 
 
-"""
-Tests for rm_junk
-"""
-
-
 def test_rmjunk_easy():
     t = 'The Smile Song(AMV)'
     t = filenames.sanitize(t)  # Sanitize should be used first
@@ -126,11 +102,6 @@ def test_rmjunk_ugly():
     t = filenames.sanitize(t)  # Sanitize should be used first
     expected = 'The Smile Song'
     assert filenames.rm_junk(t) == expected
-
-
-"""
-Tests for sanitize
-"""
 
 
 def test_sanitize_parens():
@@ -175,20 +146,10 @@ def test_sanitize_doubledot():
     assert filenames.sanitize(t) == expected
 
 
-"""
-Tests for kw_cases(keyword):
-"""
-
-
 def test_kwcases():
     t = 'The Smile Song'
     expected = ['THE SMILE SONG', 'the smile song', 'The Smile Song']
     assert filenames.kw_cases(t) == expected
-
-
-"""
-Tests for get_keyword_combos(keyword)
-"""
 
 
 def test_kwcombos():

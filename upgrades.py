@@ -1,3 +1,6 @@
+"""
+  " Installs and upgrades youtube-dl
+  """
 import errno
 import os
 
@@ -12,6 +15,7 @@ YOUTUBE_DL_PATH = '/usr/local/bin/youtube-dl'
 
 
 def try_cmd(cmd):
+    """ Attempts to run a system command. """
     try:
         os.system(cmd)
     except IOError as e:
@@ -21,6 +25,8 @@ def try_cmd(cmd):
 
 
 def youtube_dl():
+    """ Install/update youtube-dl """
+
     if not os.path.exists(YOUTUBE_DL_PATH):
         print("youtube-dl is not installed. Installing now.")
         try_cmd('sudo apt-get install youtube-dl')
@@ -34,6 +40,7 @@ def youtube_dl():
 
 
 def ffmpeg():
+    """ Install/update ffmpeg"""
     print('ffmpeg version:')
     try_cmd('ffmpeg -version')
 

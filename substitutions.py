@@ -12,6 +12,7 @@ Ex: 'song' can come as:
 This should cover a LOT of the junk that occurs, and any more specific stuff can be added to
 JUNK
 """
+
 KEYWORDS = [
     '1080P',
     'AMV',
