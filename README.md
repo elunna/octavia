@@ -9,11 +9,8 @@
 ---
 
 ### Prerequisities
-Python 2
-youtube-dl
-
-#### Uses
-* 
+- Python 2
+- youtube-dl
 
 
 ### Installing
@@ -33,10 +30,15 @@ $ ./setup.py
 ---
 
 ## Usage
+Access the copy/paste prompt:
 ```
-$ python octavia.py
+$ octavia.py
 ```
-For help: python octavia.py -h
+
+For help: 
+```
+octavia.py -h
+```
 
 ***EXAMPLES:***
 > Extract just the mp3 audio and clean the titles.
