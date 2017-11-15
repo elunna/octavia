@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
   " Advanced wrapper for youtube-dl. Makes downloading and converting videos much easier.
   """
@@ -17,7 +17,7 @@ def get_user_picks():
     """ Let the user input links one at a time. Terminate by entering a blank entry. """
     urls = []
     while True:
-        currenturl = raw_input('Video URL: ')
+        currenturl = input('Video URL: ')
         if currenturl:
             urls.append(currenturl)
         else:
@@ -51,22 +51,38 @@ def download_urls(urls, args):
 
         options = [
             'youtube-dl',
-            '--restrict-filenames',
-            '--no-playlist', '--o',
+            #'--restrict-filenames',
+            '--no-playlist',
+            # '-f', "'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4'",
             #  '--dump-user-agent',
             #  '--no-part',
             #  '--quiet',
             #  '--no-overwrites',
             #  '--ignore-errors',
+            # '--o',
         ]
 
-        if args.format == 'mp4':
-            options.extend(['-f', 'bestvideo[ext=mp4]+bestaudio[ext=m4a]'])
+        # if args.format == 'mp4':
+            # options.extend(['-f', 'bestvideo[ext=mp4]+bestaudio[ext=m4a]'])
 
-        options.extend([filename, URL])
+        options.extend(['--o', filename, URL])
 
-        p = subprocess.Popen(options, stdin=subprocess.PIPE)
-        p.wait()
+        run_cmd(options)
+
+
+def run_cmd(cmd_list):
+    """ Takes a list of commands and arguments to run. Tests if a shell command ran successfully. Returns True if successful,
+        and False it it failed or the command doesn't exist.
+    """
+    try:
+        result = subprocess.call(cmd_list)
+        if result == 0:
+            return True
+        else:
+            return False
+    except OSError as e:
+        if e.errno == os.errno.ENOENT:
+            return False
 
 
 def get_video_list(_dir):
