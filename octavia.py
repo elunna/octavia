@@ -62,8 +62,8 @@ def download_urls(urls, args):
             # '--o',
         ]
 
-        # if args.format == 'mp4':
-            # options.extend(['-f', 'bestvideo[ext=mp4]+bestaudio[ext=m4a]'])
+        if args.format == 'mp4':
+            options.extend(['-f', 'bestvideo[ext=mp4]+bestaudio[ext=m4a]'])
 
         options.extend(['--o', filename, URL])
 
@@ -128,22 +128,27 @@ def get_parser():
     parser = argparse.ArgumentParser(
         description="Wrapper for youtube-dl. Defaults to extracting audio from Youtube videos.")
 
-    parser.add_argument('-v', '--verbose', action='store_true',
-                        help="Show more explicit info on the video processing.")
     parser.add_argument('-i', '--info', action='store_true',
                         help="Bypass downloading, just show info for each video.")
+
     parser.add_argument('-l', '--list', type=str,
                         help="Download a pre-made text file of urls.")
+
     parser.add_argument('-c', '--clean-filenames', action='store_true',
                         help="Trims out junk from the video and audio filenames.")
+
     parser.add_argument('-C', '--channel-name', action='store_true',
                         help="Prepend the channel name to the file(s).")
-    parser.add_argument('-f', '--format', type=str, choices=['mp4'], default='any',
+
+    parser.add_argument('-f', '--format', type=str, choices=['mp4', 'mkv', 'mpeg', 'avi'], default='any',
                         help="Force the video to the chosen file format.")
+
     parser.add_argument('-U', '--upgrade', action='store_true',
                         help="Check for the latest version of youtube-dl and install/upgrade, then exit.")
+
     parser.add_argument('-k', '--keep-vids', action='store_true',
                         help="Keeps the videos that have been converted to audio, the default is to remove them.")
+
     parser.add_argument('-d', '--dir', action="store", default=os.curdir,
                         help="The directory to download to.")
 
