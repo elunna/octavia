@@ -3,11 +3,11 @@
   " Advanced wrapper for youtube-dl. Makes downloading and converting videos much easier.
   """
 import argparse
-import filenames
 import os
-import subprocess
-import upgrades
 import time
+import subprocess
+import filenames
+import upgrades
 
 
 VID_EXTENSIONS = tuple(['.mp4', '.mkv', '.webm', '.avi'])
