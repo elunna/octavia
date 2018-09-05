@@ -23,7 +23,6 @@ def get_user_picks():
         else:
             break
 
-    print ('Done with queue entry. Downloading videos:')
     return urls
 
 
@@ -90,6 +89,11 @@ def get_video_list(_dir):
     return ['/'.join([_dir, f]) for f in os.listdir(_dir) if f.endswith(VID_EXTENSIONS)]
 
 
+def get_mp3_list(_dir):
+    """ Retrieves a list of all videos in the specified directory. """
+    return ['/'.join([_dir, f]) for f in os.listdir(_dir) if f.endswith('.mp3')]
+
+
 def extract_audio(filelist, audioformat='mp3'):
     """ Converts each video in the filelist to the specified audio format. """
     time.sleep(2)
@@ -134,8 +138,8 @@ def get_parser():
     parser.add_argument('-l', '--list', type=str,
                         help="Download a pre-made text file of urls.")
 
-    parser.add_argument('-c', '--clean-filenames', action='store_true',
-                        help="Trims out junk from the video and audio filenames.")
+    # parser.add_argument('-c', '--clean-filenames', action='store_true',
+    #                     help="Trims out junk from the video and audio filenames.")
 
     parser.add_argument('-C', '--channel-name', action='store_true',
                         help="Prepend the channel name to the file(s).")
@@ -186,8 +190,8 @@ def main():
     if not args.keep_vids:
         cleanup(_dir=args.dir)
 
-    if args.clean_filenames:
-        filenames.clean(filenames)
+    # Clean junk from filenames
+    filenames.cleanlist(get_mp3_list(args.dir))
 
 
 if __name__ == "__main__":
